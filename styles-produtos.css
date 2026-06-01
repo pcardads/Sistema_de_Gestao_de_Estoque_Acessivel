@@ -1,0 +1,44 @@
+/* styles-produtos.css */
+
+/* Estilo para o elemento raiz */
+.root {
+	-fx-background-color: dodgerblue; /*define a cor de fundo*/
+}
+
+/* Estilo para rótulos(labels) */
+.label {
+	-fx-font-size: 14px;
+	-fx-text-fill: black;
+	-fx-text-weight: bold;
+}
+
+/* Estilo para os campos de texto */
+.text-field {
+	-fx-background-color: white;
+	-fx-border-color: lightgray;
+}
+
+/* Estilo para botões */
+.button {
+	-fx-background-color: linear-gradiente(to bottom, black, dodgerblue);
+	-fx-text-fill: white;
+	-fx-font-size: 14px;
+	-fx-cursor: hand; /*define o cursor como uma mao ao passar sobre o botao*/
+}
+
+/* Estilo para botões ao passar o mouse */
+.button:hover {
+	-fx-background-color: linear-gradient(to bottom, lightskyblue, deepskyblue);
+}
+
+/* Estilo para a visualização de tabelas */
+.table-view {
+	-fx-background-color: white;
+	-fx-border-color: lightgray;
+}
+
+/* Estilo das células da tabela */
+.table-cell {
+	-fx-padding: 10px; /*define o preenchimento interno como 10 pixels*/
+	-fx-border-color: lightgray;
+}

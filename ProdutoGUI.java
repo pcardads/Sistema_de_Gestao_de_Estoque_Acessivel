@@ -146,26 +146,7 @@ public class ProdutoGUI extends Application {
 		Button clearButton = new Button("Limpar");
 		clearButton.setOnAction(e -> limparCampos());
 
-		tableView = new TableView<>();
-		tableView.setItems(produtos);
-		tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY); // ajusta o tamanho das colunas para o mesmo tamanho
-		List<TableColumn<Produto, ?>> columns = List.of(
-				criarColuna("ID", "id"),
-				criarColuna("Produto", "nome"),
-				criarColuna("Quantidade", "quantidade"),
-				criarColuna("Preço", "preco"),
-				criarColuna("Status", "status")
-		);
-		tableView.getColumns().addAll(columns);
-
-		tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-			if (newSelection != null) {
-				nomeInput.setText(newSelection.getNome());
-				quantidadeInput.setText(String.valueOf(newSelection.getQuantidade()));
-				precoInput.setText(String.valueOf(newSelection.getPreco()));
-				statusComboBox.setValue(newSelection.getStatus());
-			}
-		});
+		tableView = configurarTabela();
 
 		HBox buttonBox = new HBox();
 		buttonBox.setSpacing(10);
@@ -228,5 +209,36 @@ public class ProdutoGUI extends Application {
 		alerta.setHeaderText(null); // Remove o cabeçalho extra para um visual mais limpo
 		alerta.setContentText(mensagem);
 		alerta.showAndWait();
+	}
+
+	/**
+	 * Isola a lógica de criação e configuração da tabela.
+	 * Aplicação de Clean Code (Extract Method) para reduzir a complexidade do método principal.
+	 */
+	private TableView<Produto> configurarTabela() {
+		TableView<Produto> tabela = new TableView<>();
+		tabela.setItems(produtos);
+		tabela.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
+		List<TableColumn<Produto, ?>> columns = List.of(
+				criarColuna("ID", "id"),
+				criarColuna("Produto", "nome"),
+				criarColuna("Quantidade", "quantidade"),
+				criarColuna("Preço", "preco"),
+				criarColuna("Status", "status")
+		);
+		tabela.getColumns().addAll(columns);
+
+		// Listener para preencher os inputs quando clicar em uma linha
+		tabela.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+			if (newSelection != null) {
+				nomeInput.setText(newSelection.getNome());
+				quantidadeInput.setText(String.valueOf(newSelection.getQuantidade()));
+				precoInput.setText(String.valueOf(newSelection.getPreco()));
+				statusComboBox.setValue(newSelection.getStatus());
+			}
+		});
+
+		return tabela;
 	}
 }

@@ -28,7 +28,21 @@ public class ProdutoGUI extends Application {
 	public void start(Stage palco) {
 		conexaoDB = ConexaoDB.conectar();
 		produtoDAO = new ProdutoDAO(conexaoDB); // inicializa o DAO 
-		produtos = FXCollections.observableArrayList(produtoDAO.listarTodos()); // carrega todos os produtos do banco de dados
+		// Inicializa a lista vazia para a interface carregar imediatamente
+		produtos = FXCollections.observableArrayList();
+
+		// OTIMIZAÇÃO DE PERFORMANCE: Carregamento assíncrono em Background Thread
+		Thread threadCarregamento = new Thread(() -> {
+			// 1. Vai à base de dados num processo paralelo (não bloqueia a interface)
+			List<Produto> dadosDoBanco = produtoDAO.listarTodos();
+
+			// 2. Devolve os dados à Thread principal da interface (JavaFX Application Thread) de forma segura
+			javafx.application.Platform.runLater(() -> {
+				produtos.setAll(dadosDoBanco);
+			});
+		});
+		threadCarregamento.setDaemon(true); // Garante que a thread morre se a aplicação fechar
+		threadCarregamento.start();
 
 		palco.setTitle("Gerenciamento de Estoque de Produtos");
 

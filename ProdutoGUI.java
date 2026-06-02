@@ -96,16 +96,40 @@ public class ProdutoGUI extends Application {
 
 		Button updateButton = new Button("Atualizar");
 		updateButton.setOnAction(e -> {
-			Produto selectedProduto = tableView.getSelectionModel().getSelectedItem(); // obtem o produto selecionado
-			if (selectedProduto != null) {
+			try {
+				Produto selectedProduto = tableView.getSelectionModel().getSelectedItem(); // obtém o produto selecionado
+
+				// Verifica se há algum produto selecionado na tabela
+				if (selectedProduto == null) {
+					mostrarAlerta("Aviso", "Selecione um produto na tabela para atualizar.", Alert.AlertType.WARNING);
+					return;
+				}
+
+				// Validação de campos vazios
+				if (nomeInput.getText().trim().isEmpty() ||
+						quantidadeInput.getText().trim().isEmpty() ||
+						precoInput.getText().trim().isEmpty() ||
+						statusComboBox.getValue() == null) {
+
+					mostrarAlerta("Erro de Validação", "Por favor, preencha todos os campos obrigatórios.", Alert.AlertType.WARNING);
+					return;
+				}
+
+				// Atualização e conversão segura
 				selectedProduto.setNome(nomeInput.getText());
 				selectedProduto.setQuantidade(Integer.parseInt(quantidadeInput.getText()));
 				String preco = precoInput.getText().replace(',', '.');
 				selectedProduto.setPreco(Double.parseDouble(preco));
 				selectedProduto.setStatus(statusComboBox.getValue());
+
 				produtoDAO.atualizar(selectedProduto);
 				produtos.setAll(produtoDAO.listarTodos());
 				limparCampos();
+
+				mostrarAlerta("Sucesso", "Produto atualizado com sucesso!", Alert.AlertType.INFORMATION);
+
+			} catch (NumberFormatException ex) {
+				mostrarAlerta("Erro de Formatação", "A quantidade e o preço devem ser números válidos.", Alert.AlertType.ERROR);
 			}
 		});
 

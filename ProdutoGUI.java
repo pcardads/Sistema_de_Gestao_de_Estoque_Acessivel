@@ -63,14 +63,35 @@ public class ProdutoGUI extends Application {
 
 		Button addButton = new Button("Adicionar");
 		addButton.setOnAction(e -> {
-			String preco = precoInput.getText().replace(',', '.'); // substitui virgula por ponto no preco;
-			Produto produto = new Produto(nomeInput.getText(),
-					Integer.parseInt(quantidadeInput.getText()),
-					Double.parseDouble(preco),
-					statusComboBox.getValue());
-			produtoDAO.inserir(produto);
-			produtos.setAll(produtoDAO.listarTodos());
-			limparCampos(); // limpa os campos de entrada para uma nova digitacao;
+			try {
+				// 1. Validação de campos vazios (Evita falhas silenciosas)
+				if (nomeInput.getText().trim().isEmpty() ||
+						quantidadeInput.getText().trim().isEmpty() ||
+						precoInput.getText().trim().isEmpty() ||
+						statusComboBox.getValue() == null) {
+
+					mostrarAlerta("Erro de Validação", "Por favor, preencha todos os campos obrigatórios.", Alert.AlertType.WARNING);
+					return; // Interrompe a execução antes de tentar gravar
+				}
+
+				// 2. Conversão segura de dados
+				String preco = precoInput.getText().replace(',', '.');
+				int quantidade = Integer.parseInt(quantidadeInput.getText());
+				double precoFormatado = Double.parseDouble(preco);
+
+				// 3. Gravação
+				Produto produto = new Produto(nomeInput.getText(), quantidade, precoFormatado, statusComboBox.getValue());
+				produtoDAO.inserir(produto);
+				produtos.setAll(produtoDAO.listarTodos());
+				limparCampos();
+
+				// Feedback positivo opcional
+				mostrarAlerta("Sucesso", "Produto adicionado com sucesso!", Alert.AlertType.INFORMATION);
+
+			} catch (NumberFormatException ex) {
+				// Captura o erro de conversão e avisa o utilizador de forma clara
+				mostrarAlerta("Erro de Formatação", "A quantidade e o preço devem ser números válidos.", Alert.AlertType.ERROR);
+			}
 		});
 
 		Button updateButton = new Button("Atualizar");
@@ -171,5 +192,17 @@ public class ProdutoGUI extends Application {
 		TableColumn<Produto, String> col = new TableColumn<>(title);
 		col.setCellValueFactory(new PropertyValueFactory<>(property)); // define a propriedade da coluna
 		return col;
+	}
+
+	/**
+	 * Exibe um alerta visual para o utilizador.
+	 * Ajuda a cumprir os requisitos de acessibilidade e tratamento de erros.
+	 */
+	private void mostrarAlerta(String titulo, String mensagem, Alert.AlertType tipo) {
+		Alert alerta = new Alert(tipo);
+		alerta.setTitle(titulo);
+		alerta.setHeaderText(null); // Remove o cabeçalho extra para um visual mais limpo
+		alerta.setContentText(mensagem);
+		alerta.showAndWait();
 	}
 }

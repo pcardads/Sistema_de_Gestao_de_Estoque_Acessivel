@@ -1,15 +1,16 @@
 /* styles-produtos.css */
 
-/* Estilo para o elemento raiz */
+/* CORREÇÃO DE ACESSIBILIDADE 1: Melhoria de Contraste */
+/* Fundo mais escuro para garantir taxa de contraste > 4.5:1 com o texto branco */
 .root {
-	-fx-background-color: dodgerblue; /*define a cor de fundo*/
+	-fx-background-color: #004080;
 }
 
-/* Estilo para rótulos(labels) */
+/* Estilo para rótulos(labels) - Texto branco puro para alto contraste */
 .label {
 	-fx-font-size: 14px;
-	-fx-text-fill: black;
-	-fx-text-weight: bold;
+	-fx-text-fill: #FFFFFF;
+	-fx-font-weight: bold; /* Sintaxe corrigida */
 }
 
 /* Estilo para os campos de texto */
@@ -20,15 +21,24 @@
 
 /* Estilo para botões */
 .button {
-	-fx-background-color: linear-gradiente(to bottom, black, dodgerblue);
+	-fx-background-color: linear-gradient(to bottom, #333333, #00509e); /* Sintaxe corrigida */
 	-fx-text-fill: white;
 	-fx-font-size: 14px;
-	-fx-cursor: hand; /*define o cursor como uma mao ao passar sobre o botao*/
+	-fx-cursor: hand;
 }
 
 /* Estilo para botões ao passar o mouse */
 .button:hover {
-	-fx-background-color: linear-gradient(to bottom, lightskyblue, deepskyblue);
+	-fx-background-color: linear-gradient(to bottom, #444444, #0073e6);
+}
+
+/* CORREÇÃO DE ACESSIBILIDADE 2: Indicador de Foco para Teclado */
+/* Cria um destaque visual claro quando o usuário chega no botão usando a tecla Tab */
+.button:focused {
+	-fx-border-color: #FFD700; /* Borda amarela chamativa */
+	-fx-border-width: 3px;
+	-fx-border-radius: 3px;
+	-fx-effect: dropshadow(three-pass-box, rgba(255,215,0,0.8), 10, 0, 0, 0);
 }
 
 /* Estilo para a visualização de tabelas */
@@ -39,6 +49,16 @@
 
 /* Estilo das células da tabela */
 .table-cell {
-	-fx-padding: 10px; /*define o preenchimento interno como 10 pixels*/
+	-fx-padding: 10px;
 	-fx-border-color: lightgray;
+}
+
+/* CORREÇÃO: Força o texto do cabeçalho da tabela a ser escuro */
+.table-view .column-header .label {
+	-fx-text-fill: #333333;
+}
+
+/* Opcional: Garante que o fundo do cabeçalho tenha um bom contraste */
+.table-view .column-header-background {
+	-fx-background-color: #E0E0E0;
 }

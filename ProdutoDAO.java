@@ -16,12 +16,20 @@ public class ProdutoDAO {
 	// metodo para inserir produto no banco de dados
 	public void inserir(Produto produto) {
 		String sql = "INSERT INTO produtos (nome_produto, quantidade, preco, status) VALUES (?, ?, ?, ?)";
-		try (PreparedStatement stmt = CONEXAO_DB.prepareStatement(sql)) {
+		// Solicitamos as chaves geradas automaticamente
+		try (PreparedStatement stmt = CONEXAO_DB.prepareStatement(sql, java.sql.Statement.RETURN_GENERATED_KEYS)) {
 			stmt.setString(1, produto.getNome());
 			stmt.setInt(2, produto.getQuantidade());
 			stmt.setDouble(3, produto.getPreco());
 			stmt.setString(4, produto.getStatus());
 			stmt.executeUpdate();
+
+			// Otimização: Recuperar o ID gerado para evitar fazer um SELECT a toda a tabela
+			try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+				if (generatedKeys.next()) {
+					produto.setId(generatedKeys.getInt(1)); // Define o ID real no objeto
+				}
+			}
 		} catch (SQLException e) {
 			System.err.println("Erro ao inserir produto: " + e.getMessage());
 		}

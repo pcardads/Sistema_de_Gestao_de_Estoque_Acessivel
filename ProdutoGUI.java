@@ -82,7 +82,9 @@ public class ProdutoGUI extends Application {
 				// 3. Gravação
 				Produto produto = new Produto(nomeInput.getText(), quantidade, precoFormatado, statusComboBox.getValue());
 				produtoDAO.inserir(produto);
-				produtos.setAll(produtoDAO.listarTodos());
+				// OTIMIZAÇÃO DE PERFORMANCE: Adicionamos apenas o novo item à lista em memória.
+				// A base de dados já não é sobrecarregada com leituras massivas.
+				produtos.add(produto);
 				limparCampos();
 
 				// Feedback positivo opcional
@@ -136,10 +138,18 @@ public class ProdutoGUI extends Application {
 		Button deleteButton = new Button("Excluir");
 		deleteButton.setOnAction(e -> {
 			Produto selectedProduto = tableView.getSelectionModel().getSelectedItem();
+
 			if (selectedProduto != null) {
-				produtoDAO.excluir(selectedProduto.getId()); // excluir o produto do banco de dados
-				produtos.setAll(produtoDAO.listarTodos());
+				produtoDAO.excluir(selectedProduto.getId()); // apaga na base de dados
+
+				// OTIMIZAÇÃO DE PERFORMANCE: Remove apenas o item da lista em memória
+				// em vez de recarregar toda a base de dados novamente
+				produtos.remove(selectedProduto);
+
 				limparCampos();
+				mostrarAlerta("Sucesso", "Produto excluído com sucesso!", Alert.AlertType.INFORMATION);
+			} else {
+				mostrarAlerta("Aviso", "Selecione um produto na tabela para excluir.", Alert.AlertType.WARNING);
 			}
 		});
 
